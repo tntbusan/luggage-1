@@ -99,7 +99,7 @@
     <img src="luggage-logo.png" alt="짐보관 디자인" class="bg">
     <div class="text-block">
       <div class="date-label">DATE</div>
-      <div class="date-value" id="auto-date">--.--.-- (--)</div>
+      <div class="date-value" id="auto-date">--.--.-- (--)</div> <!-- ⭐ 날짜 들어가는 부분 -->
       <div class="details">
         こちらのお客様は <strong>TNTBUSAN</strong> の<br>無料手荷物預かりサービスをご利用いただけます。<br><br>
         <strong>짐은 1인 1개 / 도착 1일차 하루만 /<br>
@@ -129,8 +129,7 @@
           dd = String(now.getDate()).padStart(2,'0'),
           wd = ['SUN','MON','TUE','WED','THU','FRI','SAT'][now.getDay()];
 
-      document.getElementById('auto-date').textContent = 
-        ${yy}.${mm}.${dd} (${wd});
+      document.getElementById('auto-date').textContent = `${yy}.${mm}.${dd} (${wd})`;
     }
 
     function copyDate() {
@@ -145,7 +144,7 @@
     }
 
     updateDate();
-    setInterval(updateDate, 60_000);
+    setInterval(updateDate, 60_000); // 1분마다 갱신
   </script>
 </body>
 </html>
