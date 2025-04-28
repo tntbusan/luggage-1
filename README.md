@@ -1,1 +1,1 @@
-# luggage.html
+# luggage
