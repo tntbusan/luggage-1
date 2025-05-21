@@ -65,21 +65,20 @@
   </div>
 
   <script>
-    // ✅ 날짜별 비밀번호 설정 (주말 등 특정 날짜)
+    // 날짜별 비밀번호 (주말 등 미리 등록)
     const passwordMap = {
-      "2025-05-24": "2030",  // 토요일
-      "2025-05-25": "4050",   // 일요일
-      "2025-05-26": "6070"   // 월요일
+      "2025-05-24": "2030",
+      "2025-05-25": "4050",
+      "2025-05-26": "6070"
     };
 
-    // ✅ 평일용 기본 비밀번호 설정
+    // 평일용 기본 비밀번호
     const defaultPassword = "8864";
 
-    // ✅ 오늘 날짜 가져오기 (KST 기준)
+    // 오늘 날짜 (KST 기준)
     const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
-      .toISOString().slice(0, 10); // 예: '2025-05-21'
+      .toISOString().slice(0, 10); // 'YYYY-MM-DD'
 
-    // ✅ 오늘에 해당하는 비밀번호 불러오기 (없으면 기본값 사용)
     const correctPassword = passwordMap[today] || defaultPassword;
 
     function checkPassword() {
@@ -92,6 +91,13 @@
         error.textContent = "비밀번호가 틀렸습니다.";
       }
     }
+
+    // ⌨️ 엔터키 입력 지원
+    document.getElementById("passwordInput").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        checkPassword();
+      }
+    });
   </script>
 </body>
 </html>
