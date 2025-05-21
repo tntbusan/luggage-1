@@ -65,19 +65,22 @@
   </div>
 
   <script>
-    // 날짜별 비밀번호 설정 (여기만 매주 금요일에 수정)
+    // ✅ 날짜별 비밀번호 설정 (주말 등 특정 날짜)
     const passwordMap = {
-      "2025-05-24": "1020",  // 토요일
-      "2025-05-25": "2030",  // 일요일
-      "2025-05-26": "3040"   // 월요일
+      "2025-05-24": "2030",  // 토요일
+      "2025-05-25": "4050"   // 일요일
+      "2025-05-26": "6070"   // 월요일
     };
 
-    // 오늘 날짜 구하기 (한국시간 기준)
-    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
-      .toISOString().slice(0, 10); // 예: '2025-05-17'
+    // ✅ 평일용 기본 비밀번호 설정
+    const defaultPassword = "8864";
 
-    // 오늘 적용할 비밀번호
-    const correctPassword = passwordMap[today];
+    // ✅ 오늘 날짜 가져오기 (KST 기준)
+    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
+      .toISOString().slice(0, 10); // 예: '2025-05-21'
+
+    // ✅ 오늘에 해당하는 비밀번호 불러오기 (없으면 기본값 사용)
+    const correctPassword = passwordMap[today] || defaultPassword;
 
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
