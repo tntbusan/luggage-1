@@ -27,37 +27,38 @@
     }
 
     .password-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 80%;
-}
+      position: relative;
+      display: inline-block;
+      width: 80%;
+    }
 
-input[type="password"],
-input[type="text"] {
-  padding: 12px 40px 12px 12px;
-  width: 100%;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-  height: 48px;
-}
+    input[type="password"],
+    input[type="text"] {
+      padding: 12px 40px 12px 12px;
+      width: 100%;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      height: 48px;
+    }
 
-.toggle-visibility {
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  font-size: 20px;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  width: 24px;
-}
+    .toggle-visibility {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      font-size: 20px;
+      cursor: pointer;
+      user-select: none;
+      height: 24px;
+      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     button {
       background-color: #4F9FFF;
       color: white;
@@ -91,25 +92,18 @@ input[type="text"] {
   </div>
 
   <script>
-    // 무작위 4자리 숫자 생성
-    function generateRandom4Digits() {
-      return Math.floor(1000 + Math.random() * 9000).toString();
-    }
+    // ✅ 고정된 날짜별 비밀번호 (랜덤 4자리 고정값)
+    const passwordMap = {
+      "2025-05-21": "3147",
+      "2025-05-22": "6893",
+      "2025-05-23": "5208",
+      "2025-05-24": "4721",
+      "2025-05-25": "7810"
+    };
 
-    // 오늘부터 7일치 비밀번호 자동 생성
-    const passwordMap = {};
-    const baseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+    const defaultPassword = "9210";
 
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(baseDate);
-      date.setDate(date.getDate() + i);
-      const dateKey = date.toISOString().slice(0, 10);
-      passwordMap[dateKey] = generateRandom4Digits();
-    }
-
-    const defaultPassword = "0000";
-
-    // 오후 3시 기준으로 다음날 비밀번호 적용
+    // ✅ 오후 3시(KST) 기준으로 다음날 비밀번호 적용
     const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
     if (now.getHours() >= 15) {
       now.setDate(now.getDate() + 1);
@@ -145,10 +139,6 @@ input[type="text"] {
         checkPassword();
       }
     });
-
-    // 개발자용 출력
-    console.log("📅 자동 생성된 비밀번호 목록:");
-    console.table(passwordMap);
   </script>
 </body>
 </html>
