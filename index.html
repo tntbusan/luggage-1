@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>접근 확인</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: sans-serif;
@@ -18,7 +18,7 @@
       border-radius: 16px;
       max-width: 400px;
       margin: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
@@ -34,26 +34,27 @@
 
     input[type="password"],
     input[type="text"] {
-      padding: 10px;
+      padding: 10px 40px 10px 10px;
       width: 100%;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
       margin-bottom: 20px;
       box-sizing: border-box;
+      height: 44px;
     }
-    
+
     .toggle-visibility {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 18px;
-  color: #555;
-  user-select: none;
-  line-height: 1;
-}
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      user-select: none;
+    }
+
     button {
       background-color: #4F9FFF;
       color: white;
@@ -78,21 +79,21 @@
   <div class="container">
     <h2>비밀번호를 입력하세요</h2>
     <div class="password-wrapper">
-      <input type="password" id="passwordInput" placeholder="비밀번호 입력">
+      <input type="password" id="passwordInput" placeholder="비밀번호 입력" />
       <span class="toggle-visibility" onclick="togglePassword()">👁️</span>
     </div>
-    <br>
+    <br />
     <button onclick="checkPassword()">확인</button>
     <div id="errorMessage" class="error"></div>
   </div>
 
   <script>
-    // ✅ 무작위 4자리 비밀번호 생성
+    // 무작위 4자리 숫자 생성
     function generateRandom4Digits() {
       return Math.floor(1000 + Math.random() * 9000).toString();
     }
 
-    // ✅ 오늘부터 7일치 비밀번호 자동 생성
+    // 오늘부터 7일치 비밀번호 자동 생성
     const passwordMap = {};
     const baseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
 
@@ -105,7 +106,7 @@
 
     const defaultPassword = "0000";
 
-    // ✅ 오후 3시 이후면 다음날 비번 사용
+    // 오후 3시 기준으로 다음날 비밀번호 적용
     const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
     if (now.getHours() >= 15) {
       now.setDate(now.getDate() + 1);
@@ -136,15 +137,15 @@
       }
     }
 
-    document.getElementById("passwordInput").addEventListener("keyup", function(event) {
+    document.getElementById("passwordInput").addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         checkPassword();
       }
     });
 
-    // 개발용 콘솔 확인
-    //console.log("자동 생성된 비밀번호 목록:");
-    //console.table(passwordMap);
+    // 개발자용 출력
+    console.log("📅 자동 생성된 비밀번호 목록:");
+    console.table(passwordMap);
   </script>
 </body>
 </html>
