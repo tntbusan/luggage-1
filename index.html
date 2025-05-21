@@ -26,13 +26,32 @@
       color: #333;
     }
 
-    input[type="password"] {
-      padding: 10px;
+    .password-wrapper {
+      position: relative;
+      display: inline-block;
       width: 80%;
+    }
+
+    input[type="password"],
+    input[type="text"] {
+      padding: 10px;
+      width: 100%;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
       margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    .toggle-visibility {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+      color: #555;
+      user-select: none;
     }
 
     button {
@@ -58,28 +77,41 @@
 <body>
   <div class="container">
     <h2>비밀번호를 입력하세요</h2>
-    <input type="password" id="passwordInput" placeholder="비밀번호 입력">
+    <div class="password-wrapper">
+      <input type="password" id="passwordInput" placeholder="비밀번호 입력">
+      <span class="toggle-visibility" onclick="togglePassword()">👁️</span>
+    </div>
     <br>
     <button onclick="checkPassword()">확인</button>
     <div id="errorMessage" class="error"></div>
   </div>
 
   <script>
-    // 날짜별 비밀번호 (주말 등 미리 등록)
-    const passwordMap = {
-      "2025-05-24": "2030",
-      "2025-05-25": "4050",
-      "2025-05-26": "6070"
-    };
+    // ✅ 무작위 4자리 비밀번호 생성
+    function generateRandom4Digits() {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
 
-    // 평일용 기본 비밀번호
-    const defaultPassword = "8864";
+    // ✅ 오늘부터 7일치 비밀번호 자동 생성
+    const passwordMap = {};
+    const baseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
 
-    // 오늘 날짜 (KST 기준)
-    const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
-      .toISOString().slice(0, 10); // 'YYYY-MM-DD'
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(baseDate);
+      date.setDate(date.getDate() + i);
+      const dateKey = date.toISOString().slice(0, 10);
+      passwordMap[dateKey] = generateRandom4Digits();
+    }
 
-    const correctPassword = passwordMap[today] || defaultPassword;
+    const defaultPassword = "0000";
+
+    // ✅ 오후 3시 이후면 다음날 비번 사용
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+    if (now.getHours() >= 15) {
+      now.setDate(now.getDate() + 1);
+    }
+    const todayKey = now.toISOString().slice(0, 10);
+    const correctPassword = passwordMap[todayKey] || defaultPassword;
 
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
@@ -92,12 +124,27 @@
       }
     }
 
-    // ⌨️ 엔터키 입력 지원
+    function togglePassword() {
+      const input = document.getElementById("passwordInput");
+      const icon = document.querySelector(".toggle-visibility");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "🙈";
+      } else {
+        input.type = "password";
+        icon.textContent = "👁️";
+      }
+    }
+
     document.getElementById("passwordInput").addEventListener("keyup", function(event) {
       if (event.key === "Enter") {
         checkPassword();
       }
     });
+
+    // 개발용 콘솔 확인
+    //console.log("자동 생성된 비밀번호 목록:");
+    //console.table(passwordMap);
   </script>
 </body>
 </html>
