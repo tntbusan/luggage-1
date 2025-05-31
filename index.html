@@ -78,13 +78,15 @@
   </div>
 
   <script>
+    // ✅ 날짜별 고정 비밀번호
     const passwordMap = {
-      "2025-05-31": "5O32",
-      "2025-06-01": "2O54",
-      "2025-06-02": "4828"
+      "2025-05-27": "6893",
+      "2025-05-28": "5208",
+      "2025-05-29": "7649"
     };
     const defaultPassword = "9210";
 
+    // ✅ 오후 3시(KST) 이후면 다음날 비밀번호 사용
     const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
     if (now.getHours() >= 15) {
       now.setDate(now.getDate() + 1);
@@ -95,6 +97,7 @@
     function checkPassword() {
       const input = document.getElementById("passwordInput").value.trim();
       const error = document.getElementById("errorMessage");
+
       if (input === correctPassword) {
         window.location.href = "luggage.html";
       } else {
@@ -114,13 +117,19 @@
       }
     }
 
+    // ✅ 엔터 입력 처리
     document.getElementById("passwordInput").addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         checkPassword();
       }
     });
+
+    // ✅ 스페이스바 입력 차단
+    document.getElementById("passwordInput").addEventListener("keydown", function (event) {
+      if (event.code === "Space") {
+        event.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>
-
-이거 말한거야
