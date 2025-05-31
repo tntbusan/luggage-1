@@ -93,7 +93,13 @@
     }
     const todayKey = now.toISOString().slice(0, 10);
     const correctPassword = passwordMap[todayKey] || defaultPassword;
+const todayKey = now.toISOString().slice(0, 10);
+const correctPassword = passwordMap[todayKey] || defaultPassword;
 
+// ✅ 디버그 로그: 현재 적용되는 날짜 키와 비밀번호
+console.log("[DEBUG] 적용된 날짜 키:", todayKey);
+console.log("[DEBUG] 사용된 비밀번호:", correctPassword);
+    
     function checkPassword() {
       const input = document.getElementById("passwordInput").value.trim();
       const error = document.getElementById("errorMessage");
