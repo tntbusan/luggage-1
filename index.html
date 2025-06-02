@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +10,9 @@
       background-color: #f0f4ff;
       text-align: center;
       padding: 100px 20px;
+      margin: 0;
     }
+
     .container {
       background: white;
       padding: 40px;
@@ -19,15 +21,18 @@
       margin: auto;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
+
     h2 {
       margin-bottom: 20px;
       color: #333;
     }
+
     .password-wrapper {
       position: relative;
       display: inline-block;
       width: 80%;
     }
+
     input[type="password"],
     input[type="text"] {
       padding: 12px 40px 12px 12px;
@@ -39,6 +44,7 @@
       box-sizing: border-box;
       height: 48px;
     }
+
     .toggle-visibility {
       position: absolute;
       top: 13px;
@@ -47,6 +53,7 @@
       cursor: pointer;
       user-select: none;
     }
+
     button {
       background-color: #4F9FFF;
       color: white;
@@ -56,25 +63,39 @@
       cursor: pointer;
       font-size: 16px;
     }
+
     button:hover {
       background-color: #2e7be4;
     }
+
     .error {
       color: red;
       margin-top: 10px;
     }
-    #debugPanel {
-      display: none;
-      color: gray;
-      margin-top: 30px;
-      font-size: 14px;
-    }
-    #secretClickArea {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
+
+    .debug-button {
+      position: fixed;
+      right: 0;
+      bottom: 0;
       width: 30px;
       height: 30px;
+      background: transparent;
+      border: none;
+      opacity: 0.3;
+      cursor: pointer;
+    }
+
+    .debug-output {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
     }
   </style>
 </head>
@@ -88,14 +109,18 @@
     <br />
     <button onclick="checkPassword()">확인</button>
     <div id="errorMessage" class="error"></div>
-    <div id="debugPanel"></div>
   </div>
-  <div id="secretClickArea"></div>
+
+  <!-- 디버그 터치 버튼 -->
+  <button class="debug-button" onclick="showDebug()"></button>
+  <div class="debug-output" id="debugOutput"></div>
+
   <script>
     const passwordMap = {
-      "2025-05-31": "6893",
-      "2025-06-01": "5208",
-      "2025-06-02": "7649"
+      "2025-06-02": "7649",
+      "2025-06-03": "3359",
+      "2025-06-04": "4028",
+      "2025-06-05": "5937"
     };
     const defaultPassword = "9210";
 
@@ -109,6 +134,7 @@
     function checkPassword() {
       const input = document.getElementById("passwordInput").value.trim();
       const error = document.getElementById("errorMessage");
+
       if (input === correctPassword) {
         window.location.href = "luggage.html";
       } else {
@@ -128,23 +154,27 @@
       }
     }
 
+    // 엔터 입력 처리
     document.getElementById("passwordInput").addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         checkPassword();
       }
     });
 
+    // 스페이스 입력 방지
     document.getElementById("passwordInput").addEventListener("keydown", function (event) {
       if (event.code === "Space") {
         event.preventDefault();
       }
     });
 
-    document.getElementById("secretClickArea").addEventListener("click", function () {
-      const debug = document.getElementById("debugPanel");
-      debug.innerText = `[DEBUG] 오늘 날짜: ${todayKey}, 비밀번호: ${correctPassword}`;
+    // 디버그 표시 함수
+    function showDebug() {
+      const debug = document.getElementById("debugOutput");
+      debug.innerText = `[DEBUG] 적용 키: ${todayKey}\n비밀번호: ${correctPassword}`;
       debug.style.display = "block";
-    });
+      setTimeout(() => debug.style.display = "none", 6000);
+    }
   </script>
 </body>
 </html>
