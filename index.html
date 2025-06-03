@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -73,29 +73,30 @@
       margin-top: 10px;
     }
 
-    .debug-button {
+    /* 디버그 터치 영역 (투명) */
+    .debug-touch {
       position: fixed;
       right: 0;
       bottom: 0;
       width: 30px;
       height: 30px;
+      z-index: 99;
       background: transparent;
-      border: none;
-      opacity: 0.3;
-      cursor: pointer;
     }
 
-    .debug-output {
+    .debug-info {
       position: fixed;
-      bottom: 20px;
+      bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      background: #333;
+      background: rgba(0, 0, 0, 0.85);
       color: #fff;
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 8px;
       font-size: 14px;
       display: none;
+      white-space: pre-line;
+      z-index: 1000;
     }
   </style>
 </head>
@@ -111,26 +112,36 @@
     <div id="errorMessage" class="error"></div>
   </div>
 
-  <!-- 디버그 터치 버튼 -->
-  <button class="debug-button" onclick="showDebug()"></button>
-  <div class="debug-output" id="debugOutput"></div>
+  <!-- 디버그용 터치 영역 -->
+  <div class="debug-touch" onclick="showDebugInfo()"></div>
+  <div id="debugBox" class="debug-info"></div>
 
   <script>
+    // 1) 날짜별 고정 비밀번호 설정 (원하는 날짜와 비밀번호를 추가하세요)
     const passwordMap = {
-      "2025-06-02": "7649",
       "2025-06-03": "3359",
       "2025-06-04": "4028",
       "2025-06-05": "5937"
     };
+    // 해당 날짜에 key가 없을 때 사용할 기본 비밀번호
     const defaultPassword = "9210";
 
-    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
-    if (now.getHours() >= 15) {
-      now.setDate(now.getDate() + 1);
+    // 2) KST(한국 시간) 기준 현재 시간 계산
+    const raw = new Date();
+    const KST_OFFSET = 9 * 60 * 60 * 1000; // UTC+9
+    const kstNow = new Date(raw.getTime() + KST_OFFSET);
+
+    // 3) 오후 3시(15시) 이후라면 날짜를 하루 더한다 (다음날 비밀번호 사용)
+    if (kstNow.getHours() >= 15) {
+      kstNow.setDate(kstNow.getDate() + 1);
     }
-    const todayKey = now.toISOString().slice(0, 10);
+
+    // 4) todayKey는 YYYY-MM-DD 형식으로 만든 문자열
+    const todayKey = kstNow.toISOString().slice(0, 10);
+    // 5) passwordMap에 오늘(혹은 내일)이 key로 있으면 그 값을, 없으면 defaultPassword 사용
     const correctPassword = passwordMap[todayKey] || defaultPassword;
 
+    // 비밀번호 확인
     function checkPassword() {
       const input = document.getElementById("passwordInput").value.trim();
       const error = document.getElementById("errorMessage");
@@ -142,6 +153,7 @@
       }
     }
 
+    // 눈 아이콘 토글 (비밀번호 보이기/숨기기)
     function togglePassword() {
       const input = document.getElementById("passwordInput");
       const icon = document.querySelector(".toggle-visibility");
@@ -154,26 +166,29 @@
       }
     }
 
-    // 엔터 입력 처리
+    // 엔터 키 입력 시 확인 버튼 클릭처럼 동작
     document.getElementById("passwordInput").addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         checkPassword();
       }
     });
 
-    // 스페이스 입력 방지
+    // 스페이스바 입력 차단 (입력 중 공백 생성되지 않도록)
     document.getElementById("passwordInput").addEventListener("keydown", function (event) {
       if (event.code === "Space") {
         event.preventDefault();
       }
     });
 
-    // 디버그 표시 함수
-    function showDebug() {
-      const debug = document.getElementById("debugOutput");
-      debug.innerText = `[DEBUG] 적용 키: ${todayKey}\n비밀번호: ${correctPassword}`;
-      debug.style.display = "block";
-      setTimeout(() => debug.style.display = "none", 6000);
+    // 디버그 정보 표시 함수 (오른쪽 아래 터치 시)
+    function showDebugInfo() {
+      const box = document.getElementById("debugBox");
+      box.innerText = `[DEBUG] 적용된 날짜 키: ${todayKey}\n[DEBUG] 사용된 비밀번호: ${correctPassword}`;
+      box.style.display = "block";
+      // 5초 후 자동으로 숨김
+      setTimeout(() => {
+        box.style.display = "none";
+      }, 5000);
     }
   </script>
 </body>
