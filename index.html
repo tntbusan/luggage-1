@@ -10,9 +10,7 @@
       background-color: #f0f4ff;
       text-align: center;
       padding: 100px 20px;
-      margin: 0;
     }
-
     .container {
       background: white;
       padding: 40px;
@@ -21,18 +19,15 @@
       margin: auto;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
-
     h2 {
       margin-bottom: 20px;
       color: #333;
     }
-
     .password-wrapper {
       position: relative;
       display: inline-block;
       width: 80%;
     }
-
     input[type="password"],
     input[type="text"] {
       padding: 12px 40px 12px 12px;
@@ -44,7 +39,6 @@
       box-sizing: border-box;
       height: 48px;
     }
-
     .toggle-visibility {
       position: absolute;
       top: 13px;
@@ -53,7 +47,6 @@
       cursor: pointer;
       user-select: none;
     }
-
     button {
       background-color: #4F9FFF;
       color: white;
@@ -63,40 +56,17 @@
       cursor: pointer;
       font-size: 16px;
     }
-
     button:hover {
       background-color: #2e7be4;
     }
-
     .error {
       color: red;
       margin-top: 10px;
     }
-
-    /* 디버그 터치 영역 (투명) */
-    .debug-touch {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      width: 30px;
-      height: 30px;
-      z-index: 99;
-      background: transparent;
-    }
-
-    .debug-info {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 8px;
+    .debug {
+      margin-top: 20px;
       font-size: 14px;
-      display: none;
-      white-space: pre-line;
-      z-index: 1000;
+      color: #555;
     }
   </style>
 </head>
@@ -108,38 +78,52 @@
       <span class="toggle-visibility" onclick="togglePassword()">👁️</span>
     </div>
     <br />
-    <button onclick="checkPassword()">확인</button>
+    <button id="confirmButton">확인</button>
     <div id="errorMessage" class="error"></div>
+    <!-- 디버그용: 현재 적용되는 날짜 키 보여주기 -->
+    <div id="debugInfo" class="debug"></div>
   </div>
 
-  <!-- 디버그용 터치 영역 -->
-  <div class="debug-touch" onclick="showDebugInfo()"></div>
-  <div id="debugBox" class="debug-info"></div>
-
   <script>
-    // 1) 날짜별 고정 비밀번호 설정
+    // 1) 날짜별 고정 비밀번호 설정 (여기에 원하는 날짜와 비밀번호를 추가하세요)
     const passwordMap = {
-      "2025-06-03": "3359",
-      "2025-06-04": "4028",
-      "2025-06-05": "5937"
+      "2025-06-05": "5937",
+       "2025-06-06": "4583",
+       "2025-06-07": "5348",
     };
-    // 키가 없을 때 사용할 기본 비밀번호
+    // 해당 날짜에 키가 없을 때 사용할 기본 비밀번호
     const defaultPassword = "9210";
 
-    // 2) 로컬 시간을 UTC로 변환 후, KST(한국 시간) 적용
-    const nowLocal = new Date();
-    const utc = nowLocal.getTime() + (nowLocal.getTimezoneOffset() * 60000);
-    const kstNow = new Date(utc + 9 * 60 * 60 * 1000); // UTC + 9시간
-
-    // 3) 오후 3시(15시) 이후라면 날짜를 하루 더해 다음날 비밀번호 사용
-    if (kstNow.getHours() >= 15) {
-      kstNow.setDate(kstNow.getDate() + 1);
+    /**
+     * KST(Asia/Seoul) 시각을 가져와서,
+     * 오후 3시(15:00) 이후면 다음 날 날짜를 반환
+     * 리턴 형식: "YYYY-MM-DD"
+     */
+    function getKSTDate() {
+      // 브라우저 로컬 시간을 KST로 변환
+      const nowKST = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+      );
+      // 오후 3시(15시) 이후라면 날짜를 +1
+      if (nowKST.getHours() >= 15) {
+        nowKST.setDate(nowKST.getDate() + 1);
+      }
+      // YYYY-MM-DD 형식으로 변환
+      const year = nowKST.getFullYear();
+      const month = String(nowKST.getMonth() + 1).padStart(2, "0");
+      const day = String(nowKST.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     }
 
-    // 4) 오늘(또는 내일) 날짜 키 생성 → "YYYY-MM-DD"
-    const todayKey = kstNow.toISOString().slice(0, 10);
-    // 5) passwordMap에 날짜 키가 있으면 해당 비밀번호, 없으면 기본 비밀번호 사용
+    // 오늘 키(관리용): KST 기준으로 계산된 날짜
+    const todayKey = getKSTDate();
+    // 실제 비교할 비밀번호
     const correctPassword = passwordMap[todayKey] || defaultPassword;
+
+    // 디버그 정보 화면에 표시
+    document.getElementById("debugInfo").textContent =
+      "[DEBUG] 현재 적용 날짜 키: " + todayKey +
+      "  |  사용 비밀번호: " + correctPassword;
 
     // 비밀번호 확인 함수
     function checkPassword() {
@@ -153,7 +137,7 @@
       }
     }
 
-    // 눈 아이콘 토글: 비번 보이기/숨기기
+    // 입력한 비밀번호 보였다가 다시 가려주는 토글 함수
     function togglePassword() {
       const input = document.getElementById("passwordInput");
       const icon = document.querySelector(".toggle-visibility");
@@ -166,30 +150,28 @@
       }
     }
 
-    // 엔터 키 입력 시 확인 버튼 클릭처럼 동작
-    document.getElementById("passwordInput").addEventListener("keyup", function (event) {
-      if (event.key === "Enter") {
-        checkPassword();
-      }
-    });
+    // 엔터 입력 시에도 확인 버튼과 동일하게 동작
+    document
+      .getElementById("passwordInput")
+      .addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+          checkPassword();
+        }
+      });
 
-    // 스페이스바 입력 차단 (공백 입력 방지)
-    document.getElementById("passwordInput").addEventListener("keydown", function (event) {
-      if (event.code === "Space") {
-        event.preventDefault();
-      }
-    });
+    // 공백(스페이스) 입력 차단
+    document
+      .getElementById("passwordInput")
+      .addEventListener("keydown", function (event) {
+        if (event.code === "Space") {
+          event.preventDefault();
+        }
+      });
 
-    // 디버그 정보 표시 함수 (오른쪽 하단 30px 터치 시)
-    function showDebugInfo() {
-      const box = document.getElementById("debugBox");
-      box.innerText = `[DEBUG] 적용된 날짜 키: ${todayKey}\n[DEBUG] 사용된 비밀번호: ${correctPassword}`;
-      box.style.display = "block";
-      // 5초 후 자동 숨김
-      setTimeout(() => {
-        box.style.display = "none";
-      }, 5000);
-    }
+    // 확인 버튼 클릭 시 동작
+    document
+      .getElementById("confirmButton")
+      .addEventListener("click", checkPassword);
   </script>
 </body>
 </html>
